@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltGuard 360</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#6b7280;
+    --primary:#1769aa;
+    --primary2:#0d47a1;
+    --border:#e2e8f0;
+    --danger:#dc2626;
+    --warning:#d97706;
+    --success:#15803d;
+    --sidebar:#102a43;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    min-height:100vh;
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f1f5f9;
+    --muted:#94a3b8;
+    --border:#334155;
+    --sidebar:#020617;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:240px;
+    background:var(--sidebar);
+    color:white;
+    min-height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    overflow-y:auto;
+}
+
+.logo{
+    padding:25px 20px;
+    font-size:23px;
+    font-weight:bold;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo span{color:#64b5f6}
+
+.nav{
+    padding:15px 10px;
+}
+
+.nav button{
+    width:100%;
+    background:none;
+    border:0;
+    color:#dbeafe;
+    padding:13px 15px;
+    text-align:left;
+    border-radius:8px;
+    margin-bottom:5px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.nav button:hover,
+.nav button.active{
+    background:#1769aa;
+    color:white;
+}
+
+/* MAIN */
+.main{
+    margin-left:240px;
+    width:calc(100% - 240px);
+}
+
+.topbar{
+    height:70px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.topbar h2{font-size:20px}
+
+.theme-btn{
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.content{
+    padding:25px;
+}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin:20px 0;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.04);
+}
+
+.kpi-title{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.kpi-value{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.section-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.section-card h3{
+    margin-bottom:15px;
+}
+
+/* TABLE */
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* BUTTONS */
+.btn{
+    border:0;
+    background:var(--primary);
+    color:white;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn:hover{background:var(--primary2)}
+
+.btn-danger{background:var(--danger)}
+.btn-success{background:var(--success)}
+.btn-warning{background:var(--warning)}
+
+.btn-small{
+    padding:6px 9px;
+    font-size:12px;
+}
+
+/* FORM */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+label{
+    font-size:13px;
+    font-weight:bold;
+    display:block;
+    margin-bottom:6px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:11px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+    outline:none;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.form-actions{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+}
+
+/* STATUS */
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.badge-green{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-yellow{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-red{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-blue{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.show{display:flex}
+
+.modal-box{
+    width:min(650px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:var(--card);
+    border-radius:15px;
+    padding:25px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    background:none;
+    border:0;
+    font-size:25px;
+    cursor:pointer;
+    color:var(--text);
+}
+
+/* HUB */
+.hub-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-top:20px;
+}
+
+.hub-btn{
+    padding:25px 15px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    cursor:pointer;
+    color:var(--text);
+    font-size:16px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.hub-btn:hover{
+    transform:translateY(-3px);
+    border-color:var(--primary);
+}
+
+.hub-content{
+    display:none;
+    margin-top:20px;
+}
+
+.topic-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px;
+    margin:12px 0;
+}
+
+.topic-card h3{
+    margin-bottom:8px;
+}
+
+.topic-card p{
+    color:var(--muted);
+    line-height:1.6;
+}
+
+.back-btn{
+    margin-bottom:15px;
+}
+
+/* SEARCH */
+.search-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.search-row input{
+    max-width:400px;
+}
+
+/* PROGRESS */
+.progress{
+    height:9px;
+    background:#e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.progress-bar{
+    height:100%;
+    background:#1769aa;
+}
+
+/* ALERT */
+.alert{
+    padding:12px;
+    border-radius:8px;
+    margin:8px 0;
+    background:#fef3c7;
+    color:#92400e;
+}
+
+/* TOAST */
+#toast{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    background:#111827;
+    color:white;
+    padding:13px 18px;
+    border-radius:8px;
+    display:none;
+    z-index:500;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+    .sidebar{
+        width:200px;
+    }
+
+    .main{
+        margin-left:200px;
+        width:calc(100% - 200px);
+    }
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .hub-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px){
+    .sidebar{
+        position:relative;
+        width:100%;
+        min-height:auto;
+    }
+
+    body{
+        display:block;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    .nav{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .cards,
+    .grid,
+    .form-grid,
+    .hub-grid{
+        grid-template-columns:1fr;
+    }
+
+    .content{
+        padding:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        ⚡ VoltGuard <span>360</span>
+    </div>
+
+    <div class="nav">
+
+        <button class="active" onclick="showPage('dashboard',this)">
+            📊 Dashboard
+        </button>
+
+        <button onclick="showPage('equipment',this)">
+            🏭 Equipment
+        </button>
+
+        <button onclick="showPage('calculators',this)">
+            🧮 Calculators
+        </button>
+
+        <button onclick="showPage('electricalHub',this)">
+            ⚡ Electrical Hub
+        </button>
+
+        <button onclick="showPage('maintenance',this)">
+            🔧 Maintenance
+        </button>
+
+        <button onclick="showPage('faults',this)">
+            🚨 Fault Center
+        </button>
+
+        <button onclick="showPage('energy',this)">
+            📈 Energy
+        </button>
+
+        <button onclick="showPage('solar',this)">
+            ☀️ Solar
+        </button>
+
+        <button onclick="showPage('reports',this)">
+            📄 Reports
+        </button>
+
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<header class="topbar">
+    <h2 id="pageTitle">Dashboard</h2>
+
+    <button class="theme-btn" onclick="toggleDark()">
+        🌙 Theme
+    </button>
+</header>
+
+<div class="content">
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard" class="page active">
+
+    <h1>Electrical Operations Dashboard</h1>
+    <p style="color:var(--muted);margin-top:5px">
+        Monitor electrical assets, maintenance, faults and energy.
+    </p>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="kpi-title">Total Equipment</div>
+            <div class="kpi-value" id="totalEquipment">0</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Active Faults</div>
+            <div class="kpi-value" id="activeFaults">0</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Pending Maintenance</div>
+            <div class="kpi-value" id="pendingMaintenance">0</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Fleet Health</div>
+            <div class="kpi-value" id="fleetHealth">0%</div>
+        </div>
+
+    </div>
+
+    <div class="grid">
+
+        <div class="section-card">
+
+            <h3>Equipment Health</h3>
+
+            <div id="dashboardEquipment"></div>
+
+        </div>
+
+        <div class="section-card">
+
+            <h3>Recent Faults</h3>
+
+            <div id="dashboardFaults"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= EQUIPMENT ================= -->
+
+<section id="equipment" class="page">
+
+    <h1>Equipment Management</h1>
+
+    <div class="section-card">
+
+        <div class="search-row">
+
+            <input
+                id="equipmentSearch"
+                placeholder="Search equipment..."
+                oninput="renderEquipment()"
+            >
+
+            <button class="btn" onclick="openEquipmentModal()">
+                + Add Equipment
+            </button>
+
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Capacity</th>
+                        <th>Location</th>
+                        <th>Health</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="equipmentTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CALCULATORS ================= -->
+
+<section id="calculators" class="page">
+
+    <h1>Electrical Calculators</h1>
+
+    <div class="grid">
+
+        <!-- POWER -->
+        <div class="section-card">
+
+            <h3>⚡ Power Calculator</h3>
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Voltage (V)</label>
+                    <input id="powerV" type="number">
+                </div>
+
+                <div>
+                    <label>Current (A)</label>
+                    <input id="powerI" type="number">
+                </div>
+
+                <div>
+                    <label>Power Factor</label>
+                    <input id="powerPF" type="number" step="0.01" value="0.85">
+                </div>
+
+                <div>
+                    <label>System</label>
+                    <select id="powerPhase">
+                        <option value="1">Single Phase</option>
+                        <option value="3">Three Phase</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <br>
+
+            <button class="btn" onclick="calculatePower()">
+                Calculate
+            </button>
+
+            <p id="powerResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+
+        <!-- TRANSFORMER -->
+        <div class="section-card">
+
+            <h3>🔌 Transformer Current</h3>
+
+            <label>Transformer Rating (kVA)</label>
+            <input id="trKVA" type="number">
+
+            <br><br>
+
+            <label>Voltage (V)</label>
+            <input id="trV" type="number">
+
+            <br><br>
+
+            <button class="btn" onclick="calculateTransformer()">
+                Calculate
+            </button>
+
+            <p id="trResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+
+        <!-- MOTOR -->
+        <div class="section-card">
+
+            <h3>🔧 Motor Output Power</h3>
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Voltage (V)</label>
+                    <input id="motorV" type="number">
+                </div>
+
+                <div>
+                    <label>Current (A)</label>
+                    <input id="motorI" type="number">
+                </div>
+
+                <div>
+                    <label>Power Factor</label>
+                    <input id="motorPF" type="number" value="0.85">
+                </div>
+
+                <div>
+                    <label>Efficiency</label>
+                    <input id="motorEff" type="number" value="90">
+                </div>
+
+            </div>
+
+            <br>
+
+            <button class="btn" onclick="calculateMotor()">
+                Calculate
+            </button>
+
+            <p id="motorResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+
+        <!-- ENERGY COST -->
+        <div class="section-card">
+
+            <h3>💰 Energy Cost</h3>
+
+            <label>Load (kW)</label>
+            <input id="energyKW" type="number">
+
+            <br><br>
+
+            <label>Hours / Day</label>
+            <input id="energyHours" type="number">
+
+            <br><br>
+
+            <label>Working Days</label>
+            <input id="energyDays" type="number" value="30">
+
+            <br><br>
+
+            <label>Tariff ₹ / kWh</label>
+            <input id="energyTariff" type="number" value="8">
+
+            <br><br>
+
+            <button class="btn" onclick="calculateEnergyCost()">
+                Calculate
+            </button>
+
+            <p id="energyCostResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+
+        <!-- PF -->
+        <div class="section-card">
+
+            <h3>📐 Power Factor Correction</h3>
+
+            <label>Real Power (kW)</label>
+            <input id="pfKW" type="number">
+
+            <br><br>
+
+            <label>Existing PF</label>
+            <input id="pfOld" type="number" step="0.01">
+
+            <br><br>
+
+            <label>Target PF</label>
+            <input id="pfNew" type="number" step="0.01" value="0.95">
+
+            <br><br>
+
+            <button class="btn" onclick="calculatePFCorrection()">
+                Calculate
+            </button>
+
+            <p id="pfResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+
+        <!-- VOLTAGE DROP -->
+        <div class="section-card">
+
+            <h3>📏 Voltage Drop</h3>
+
+            <label>Current (A)</label>
+            <input id="dropI" type="number">
+
+            <br><br>
+
+            <label>Resistance (Ω/km)</label>
+            <input id="dropR" type="number">
+
+            <br><br>
+
+            <label>Cable Length (km)</label>
+            <input id="dropL" type="number">
+
+            <br><br>
+
+            <label>Voltage (V)</label>
+            <input id="dropV" type="number">
+
+            <br><br>
+
+            <button class="btn" onclick="calculateDrop()">
+                Calculate
+            </button>
+
+            <p id="dropResult" style="margin-top:15px;font-weight:bold"></p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ELECTRICAL HUB ================= -->
+
+<section id="electricalHub" class="page">
+
+    <h1>⚡ Electrical Hub</h1>
+
+    <p style="color:var(--muted);margin-top:5px">
+        Electrical engineering knowledge and reference center.
+    </p>
+
+
+    <!-- HUB MENU -->
+
+    <div id="hubMenu" class="hub-grid">
+
+        <button class="hub-btn" onclick="openHub('powerSystems')">
+            ⚡<br><br>Power Systems
+        </button>
+
+        <button class="hub-btn" onclick="openHub('machines')">
+            🔧<br><br>Electrical Machines
+        </button>
+
+        <button class="hub-btn" onclick="openHub('powerElectronics')">
+            🔌<br><br>Power Electronics
+        </button>
+
+        <button class="hub-btn" onclick="openHub('renewable')">
+            ☀️<br><br>Renewable Energy
+        </button>
+
+        <button class="hub-btn" onclick="openHub('protection')">
+            🛡️<br><br>Protection & Safety
+        </button>
+
+        <button class="hub-btn" onclick="openHub('smartGrid')">
+            📡<br><br>Smart Grid & IoT
+        </button>
+
+        <button class="hub-btn" onclick="openHub('formulas')">
+            📐<br><br>Electrical Formulas
+        </button>
+
+    </div>
+
+
+    <!-- POWER SYSTEMS -->
+
+    <div id="powerSystems" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>⚡ Power Systems</h2>
+
+            <div class="topic-card">
+                <h3>Three Phase Power</h3>
+                <p>P = √3 × V × I × cosφ</p>
+                <br>
+                <p>Used to calculate three-phase active power.</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Power Factor</h3>
+                <p>Power Factor = Real Power / Apparent Power</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>HVDC</h3>
+                <p>
+                    High Voltage Direct Current transmission is used
+                    for efficient long-distance power transmission.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Load Flow</h3>
+                <p>
+                    Load-flow analysis determines bus voltage,
+                    power flow and system losses.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Fault Analysis</h3>
+                <p>
+                    Common faults include three-phase, line-to-ground,
+                    line-to-line and double-line-to-ground faults.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MACHINES -->
+
+    <div id="machines" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>🔧 Electrical Machines</h2>
+
+            <div class="topic-card">
+                <h3>Transformer</h3>
+                <p>
+                    A transformer transfers electrical energy
+                    between circuits through electromagnetic induction.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Induction Motor</h3>
+                <p>
+                    An induction motor operates using electromagnetic
+                    induction and is widely used in industry.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Synchronous Machine</h3>
+                <p>
+                    A synchronous machine operates at synchronous speed
+                    and can work as a generator or motor.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>DC Machine</h3>
+                <p>
+                    DC machines can operate as motors or generators.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- POWER ELECTRONICS -->
+
+    <div id="powerElectronics" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>🔌 Power Electronics</h2>
+
+            <div class="topic-card">
+                <h3>Rectifier</h3>
+                <p>Converts AC power into DC power.</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Inverter</h3>
+                <p>Converts DC power into AC power.</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Chopper</h3>
+                <p>Converts fixed DC voltage into a controlled DC voltage.</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>IGBT</h3>
+                <p>
+                    An insulated-gate bipolar transistor used
+                    for high-power switching applications.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>SCR</h3>
+                <p>
+                    A thyristor device commonly used for controlled
+                    rectification and power control.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RENEWABLE -->
+
+    <div id="renewable" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>☀️ Renewable Energy</h2>
+
+            <div class="topic-card">
+                <h3>Solar PV</h3>
+                <p>
+                    Solar photovoltaic systems convert sunlight
+                    directly into electrical energy.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Wind Energy</h3>
+                <p>
+                    Wind turbines convert the kinetic energy of wind
+                    into electrical power.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Battery Energy Storage</h3>
+                <p>
+                    BESS stores electrical energy and supplies it
+                    when required.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Microgrid</h3>
+                <p>
+                    A microgrid combines generation, loads,
+                    storage and control systems.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PROTECTION -->
+
+    <div id="protection" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>🛡️ Protection & Safety</h2>
+
+            <div class="topic-card">
+                <h3>MCB</h3>
+                <p>
+                    Protects circuits against overload and short circuit.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>MCCB</h3>
+                <p>
+                    A circuit breaker used for higher current
+                    protection and industrial applications.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>RCCB</h3>
+                <p>
+                    Detects residual current and provides
+                    earth-leakage protection.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Earthing</h3>
+                <p>
+                    Provides a low-impedance path for fault current
+                    to improve electrical safety.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SMART GRID -->
+
+    <div id="smartGrid" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>📡 Smart Grid & IoT</h2>
+
+            <div class="topic-card">
+                <h3>Smart Meter</h3>
+                <p>
+                    Measures electrical energy and can communicate
+                    measurement information.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>IoT Monitoring</h3>
+                <p>
+                    Sensors can monitor voltage, current,
+                    temperature and equipment condition.
+                </p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Predictive Maintenance</h3>
+                <p>
+                    Equipment measurements can be analyzed to
+                    identify potential maintenance requirements.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORMULAS -->
+
+    <div id="formulas" class="hub-content">
+
+        <button class="btn back-btn" onclick="closeHub()">← Back</button>
+
+        <div class="section-card">
+
+            <h2>📐 Electrical Formula Library</h2>
+
+            <div class="topic-card">
+                <h3>Ohm's Law</h3>
+                <p>V = I × R</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Single Phase Power</h3>
+                <p>P = V × I × cosφ</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Three Phase Power</h3>
+                <p>P = √3 × V × I × cosφ</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Electrical Energy</h3>
+                <p>E = P × t</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Efficiency</h3>
+                <p>η = Output / Input × 100</p>
+            </div>
+
+            <div class="topic-card">
+                <h3>Transformer Current</h3>
+                <p>I = kVA × 1000 / V</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MAINTENANCE ================= -->
+
+<section id="maintenance" class="page">
+
+    <h1>🔧 Maintenance Center</h1>
+
+    <div class="section-card">
+
+        <button class="btn" onclick="openMaintenanceModal()">
+            + Add Maintenance
+        </button>
+
+        <br><br>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Equipment</th>
+                        <th>Due Date</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="maintenanceTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FAULTS ================= -->
+
+<section id="faults" class="page">
+
+    <h1>🚨 Fault Center</h1>
+
+    <div class="section-card">
+
+        <button class="btn" onclick="openFaultModal()">
+            + Report Fault
+        </button>
+
+        <br><br>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Fault</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="faultTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ENERGY ================= -->
+
+<section id="energy" class="page">
+
+    <h1>📈 Energy Management</h1>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="kpi-title">Today's Energy</div>
+            <div class="kpi-value" id="todayEnergy">0 kWh</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Monthly Energy</div>
+            <div class="kpi-value" id="monthEnergy">0 kWh</div>
+        </div>
+
+        <div class="card">
+            <div class="kpi-title">Monthly Cost</div>
+            <div class="kpi-value" id="monthCost">₹0</div>
+        </div>
+
+    </div>
+
+    <div class="section-card">
+
+        <h3>Add Energy Reading</h3>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Energy (kWh)</label>
+                <input id="readingEnergy" type="number">
+            </div>
+
+            <div>
+                <label>Tariff ₹/kWh</label>
+                <input id="readingTariff" type="number" value="8">
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn" onclick="addEnergyReading()">
+            Add Reading
+        </button>
+
+    </div>
+
+    <div class="section-card">
+
+        <h3>Energy Readings</h3>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Energy</th>
+                        <th>Tariff</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+
+                <tbody id="energyTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SOLAR ================= -->
+
+<section id="solar" class="page">
+
+    <h1>☀️ Solar Energy</h1>
+
+    <div class="section-card">
+
+        <div class="form-grid">
+
+            <div>
+                <label>PV Capacity (kW)</label>
+                <input id="solarKW" type="number">
+            </div>
+
+            <div>
+                <label>Peak Sun Hours</label>
+                <input id="sunHours" type="number" value="5">
+            </div>
+
+            <div>
+                <label>System Efficiency (%)</label>
+                <input id="solarEff" type="number" value="80">
+            </div>
+
+            <div>
+                <label>Tariff ₹/kWh</label>
+                <input id="solarTariff" type="number" value="8">
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn" onclick="calculateSolar()">
+            Calculate Solar Generation
+        </button>
+
+        <div id="solarResult" style="margin-top:20px"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= REPORTS ================= -->
+
+<section id="reports" class="page">
+
+    <h1>📄 Reports</h1>
+
+    <div class="section-card">
+
+        <button class="btn" onclick="generateReport()">
+            Generate Report
+        </button>
+
+        <button class="btn btn-success" onclick="exportEquipment()">
+            Export Equipment CSV
+        </button>
+
+        <button class="btn btn-warning" onclick="exportFaults()">
+            Export Fault CSV
+        </button>
+
+        <br><br>
+
+        <div id="reportPreview"></div>
+
+    </div>
+
+</section>
+
+</div>
+</main>
+
+
+<!-- EQUIPMENT MODAL -->
+
+<div id="equipmentModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Add Equipment</h2>
+            <button class="close" onclick="closeModal('equipmentModal')">×</button>
+        </div>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Equipment ID</label>
+                <input id="eqID">
+            </div>
+
+            <div>
+                <label>Equipment Name</label>
+                <input id="eqName">
+            </div>
+
+            <div>
+                <label>Type</label>
+                <input id="eqType">
+            </div>
+
+            <div>
+                <label>Capacity</label>
+                <input id="eqCapacity">
+            </div>
+
+            <div>
+                <label>Location</label>
+                <input id="eqLocation">
+            </div>
+
+            <div>
+                <label>Health (%)</label>
+                <input id="eqHealth" type="number" min="0" max="100">
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button class="btn" onclick="saveEquipment()">
+                Save
+            </button>
+
+            <button class="btn btn-danger" onclick="closeModal('equipmentModal')">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MAINTENANCE MODAL -->
+
+<div id="maintenanceModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Add Maintenance</h2>
+            <button class="close" onclick="closeModal('maintenanceModal')">×</button>
+        </div>
+
+        <label>Task</label>
+        <input id="maintTask">
+
+        <br><br>
+
+        <label>Equipment</label>
+        <input id="maintEquipment">
+
+        <br><br>
+
+        <label>Due Date</label>
+        <input id="maintDate" type="date">
+
+        <br><br>
+
+        <label>Priority</label>
+        <select id="maintPriority">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+        </select>
+
+        <br><br>
+
+        <button class="btn" onclick="saveMaintenance()">
+            Save Maintenance
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- FAULT MODAL -->
+
+<div id="faultModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Report Fault</h2>
+            <button class="close" onclick="closeModal('faultModal')">×</button>
+        </div>
+
+        <label>Equipment</label>
+        <input id="faultEquipment">
+
+        <br><br>
+
+        <label>Fault</label>
+        <input id="faultName">
+
+        <br><br>
+
+        <label>Severity</label>
+
+        <select id="faultSeverity">
+            <option>Low</option>
+            <option>Medium</option>
+            <option selected>High</option>
+            <option>Critical</option>
+        </select>
+
+        <br><br>
+
+        <label>Description</label>
+        <textarea id="faultDescription"></textarea>
+
+        <br>
+
+        <button class="btn btn-danger" onclick="saveFault()">
+            Report Fault
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let equipment = JSON.parse(localStorage.getItem("vg_equipment")) || [
+
+    {
+        id:"TR-001",
+        name:"Distribution Transformer",
+        type:"Transformer",
+        capacity:"500 kVA",
+        location:"Plant-1",
+        health:92
+    },
+
+    {
+        id:"MTR-01",
+        name:"Induction Motor",
+        type:"Motor",
+        capacity:"75 kW",
+        location:"Plant-1",
+        health:84
+    },
+
+    {
+        id:"MTR-02",
+        name:"Induction Motor",
+        type:"Motor",
+        capacity:"45 kW",
+        location:"Plant-2",
+        health:67
+    },
+
+    {
+        id:"PANEL-04",
+        name:"LT Distribution Panel",
+        type:"Panel",
+        capacity:"630 A",
+        location:"Plant-2",
+        health:43
+    },
+
+    {
+        id:"GEN-01",
+        name:"Diesel Generator",
+        type:"Generator",
+        capacity:"250 kVA",
+        location:"Utility",
+        health:89
+    },
+
+    {
+        id:"PV-01",
+        name:"Solar PV Array",
+        type:"Solar",
+        capacity:"100 kW",
+        location:"Roof",
+        health:95
+    }
+
+];
+
+
+let maintenance = JSON.parse(localStorage.getItem("vg_maintenance")) || [
+
+    {
+        id:1,
+        task:"Transformer inspection",
+        equipment:"TR-001",
+        date:"2026-09-20",
+        priority:"High",
+        status:"Pending"
+    },
+
+    {
+        id:2,
+        task:"Motor bearing inspection",
+        equipment:"MTR-02",
+        date:"2026-09-22",
+        priority:"Medium",
+        status:"Pending"
+    }
+
+];
+
+
+let faults = JSON.parse(localStorage.getItem("vg_faults")) || [
+
+    {
+        id:1,
+        equipment:"MTR-02",
+        fault:"Overheating",
+        severity:"High",
+        status:"Active",
+        date:new Date().toLocaleDateString()
+    },
+
+    {
+        id:2,
+        equipment:"PANEL-04",
+        fault:"High temperature",
+        severity:"Medium",
+        status:"Active",
+        date:new Date().toLocaleDateString()
+    }
+
+];
+
+
+let energyReadings =
+    JSON.parse(localStorage.getItem("vg_energy")) || [];
+
+
+/* =====================================================
+   PAGE NAVIGATION
+===================================================== */
+
+function showPage(pageID,button){
+
+    document.querySelectorAll(".page")
+        .forEach(p => p.classList.remove("active"));
+
+    document.getElementById(pageID)
+        .classList.add("active");
+
+    document.querySelectorAll(".nav button")
+        .forEach(b => b.classList.remove("active"));
+
+    if(button){
+        button.classList.add("active");
+    }
+
+    const titles = {
+        dashboard:"Dashboard",
+        equipment:"Equipment",
+        calculators:"Calculators",
+        electricalHub:"Electrical Hub",
+        maintenance:"Maintenance",
+        faults:"Fault Center",
+        energy:"Energy Management",
+        solar:"Solar",
+        reports:"Reports"
+    };
+
+    document.getElementById("pageTitle").textContent =
+        titles[pageID] || "VoltGuard 360";
+
+    if(pageID === "electricalHub"){
+        closeHub();
+    }
+
+    updateDashboard();
+}
+
+
+/* =====================================================
+   ELECTRICAL HUB
+===================================================== */
+
+function openHub(sectionID){
+
+    document.getElementById("hubMenu").style.display="none";
+
+    document.querySelectorAll(".hub-content")
+        .forEach(section => {
+            section.style.display="none";
+        });
+
+    const selected =
+        document.getElementById(sectionID);
+
+    if(selected){
+        selected.style.display="block";
+    }
+}
+
+
+function closeHub(){
+
+    document.querySelectorAll(".hub-content")
+        .forEach(section => {
+            section.style.display="none";
+        });
+
+    document.getElementById("hubMenu").style.display="grid";
+}
+
+
+/* =====================================================
+   EQUIPMENT
+===================================================== */
+
+function saveData(){
+
+    localStorage.setItem(
+        "vg_equipment",
+        JSON.stringify(equipment)
+    );
+
+    localStorage.setItem(
+        "vg_maintenance",
+        JSON.stringify(maintenance)
+    );
+
+    localStorage.setItem(
+        "vg_faults",
+        JSON.stringify(faults)
+    );
+
+    localStorage.setItem(
+        "vg_energy",
+        JSON.stringify(energyReadings)
+    );
+}
+
+
+function renderEquipment(){
+
+    const table =
+        document.getElementById("equipmentTable");
+
+    const search =
+        document.getElementById("equipmentSearch")
+        ?.value.toLowerCase() || "";
+
+    table.innerHTML="";
+
+    equipment
+        .filter(e =>
+            `${e.id} ${e.name} ${e.type} ${e.location}`
+            .toLowerCase()
+            .includes(search)
+        )
+        .forEach((e,index)=>{
+
+            let badge =
+                e.health >= 80
+                ? "badge-green"
+                : e.health >= 60
+                ? "badge-yellow"
+                : "badge-red";
+
+            table.innerHTML += `
+
+            <tr>
+
+                <td>${e.id}</td>
+
+                <td>${e.name}</td>
+
+                <td>${e.type}</td>
+
+                <td>${e.capacity}</td>
+
+                <td>${e.location}</td>
+
+                <td>
+
+                    <span class="badge ${badge}">
+                        ${e.health}%
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <button
+                        class="btn btn-danger btn-small"
+                        onclick="deleteEquipment(${index})">
+                        Delete
+                    </button>
+
+                </td>
+
+            </tr>
+
+            `;
+        });
+}
+
+
+function openEquipmentModal(){
+
+    document.getElementById("equipmentModal")
+        .classList.add("show");
+
+}
+
+
+function saveEquipment(){
+
+    const id =
+        document.getElementById("eqID").value.trim();
+
+    const name =
+        document.getElementById("eqName").value.trim();
+
+    const type =
+        document.getElementById("eqType").value.trim();
+
+    const capacity =
+        document.getElementById("eqCapacity").value.trim();
+
+    const location =
+        document.getElementById("eqLocation").value.trim();
+
+    const health =
+        Number(document.getElementById("eqHealth").value);
+
+    if(!id || !name || !type){
+
+        toast("Enter equipment ID, name and type.");
+
+        return;
+    }
+
+    equipment.push({
+        id,
+        name,
+        type,
+        capacity,
+        location,
+        health:isNaN(health)?100:health
+    });
+
+    saveData();
+    renderEquipment();
+    updateDashboard();
+
+    closeModal("equipmentModal");
+
+    document.querySelectorAll("#equipmentModal input")
+        .forEach(i=>i.value="");
+
+    toast("Equipment added successfully.");
+
+}
+
+
+function deleteEquipment(index){
+
+    if(confirm("Delete this equipment?")){
+
+        equipment.splice(index,1);
+
+        saveData();
+        renderEquipment();
+        updateDashboard();
+
+        toast("Equipment deleted.");
+
+    }
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    document.getElementById("totalEquipment")
+        .textContent = equipment.length;
+
+    const active =
+        faults.filter(f=>f.status==="Active").length;
+
+    document.getElementById("activeFaults")
+        .textContent = active;
+
+    const pending =
+        maintenance.filter(m=>m.status==="Pending").length;
+
+    document.getElementById("pendingMaintenance")
+        .textContent = pending;
+
+    const health =
+        equipment.length
+        ? Math.round(
+            equipment.reduce(
+                (sum,e)=>sum+Number(e.health||0),0
+            ) / equipment.length
+        )
+        : 0;
+
+    document.getElementById("fleetHealth")
+        .textContent = health+"%";
+
+
+    /* EQUIPMENT HEALTH */
+
+    const box =
+        document.getElementById("dashboardEquipment");
+
+    box.innerHTML="";
+
+    equipment.slice(0,6).forEach(e=>{
+
+        box.innerHTML += `
+
+        <div style="margin-bottom:15px">
+
+            <div style="
+                display:flex;
+                justify-content:space-between">
+
+                <span>${e.name}</span>
+
+                <b>${e.health}%</b>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width:${e.health}%">
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    /* RECENT FAULTS */
+
+    const faultBox =
+        document.getElementById("dashboardFaults");
+
+    faultBox.innerHTML="";
+
+    faults.slice(-5).reverse().forEach(f=>{
+
+        faultBox.innerHTML += `
+
+        <div class="alert">
+
+            <b>${f.equipment}</b> —
+            ${f.fault}
+
+            <br>
+
+            <small>
+                ${f.severity} | ${f.status}
+            </small>
+
+        </div>
+
+        `;
+
+    });
+
+    renderMaintenance();
+    renderFaults();
+    renderEnergy();
+
+}
+
+
+/* =====================================================
+   MAINTENANCE
+===================================================== */
+
+function openMaintenanceModal(){
+
+    document.getElementById("maintenanceModal")
+        .classList.add("show");
+
+}
+
+
+function saveMaintenance(){
+
+    const task =
+        document.getElementById("maintTask").value.trim();
+
+    const equipmentName =
+        document.getElementById("maintEquipment").value.trim();
+
+    const date =
+        document.getElementById("maintDate").value;
+
+    const priority =
+        document.getElementById("maintPriority").value;
+
+    if(!task || !equipmentName || !date){
+
+        toast("Complete all maintenance fields.");
+
+        return;
+    }
+
+    maintenance.push({
+
+        id:Date.now(),
+
+        task,
+
+        equipment:equipmentName,
+
+        date,
+
+        priority,
+
+        status:"Pending"
+
+    });
+
+    saveData();
+    renderMaintenance();
+    updateDashboard();
+
+    closeModal("maintenanceModal");
+
+    toast("Maintenance task added.");
+
+}
+
+
+function renderMaintenance(){
+
+    const table =
+        document.getElementById("maintenanceTable");
+
+    if(!table)return;
+
+    table.innerHTML="";
+
+    maintenance.forEach((m,index)=>{
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${m.task}</td>
+
+            <td>${m.equipment}</td>
+
+            <td>${m.date}</td>
+
+            <td>${m.priority}</td>
+
+            <td>
+
+                <span class="badge ${
+                    m.status==="Completed"
+                    ?"badge-green"
+                    :"badge-yellow"
+                }">
+
+                    ${m.status}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                ${
+                    m.status==="Pending"
+
+                    ?
+
+                    `<button
+                        class="btn btn-success btn-small"
+                        onclick="completeMaintenance(${index})">
+                        Complete
+                    </button>`
+
+                    :
+
+                    ""
+                }
+
+                <button
+                    class="btn btn-danger btn-small"
+                    onclick="deleteMaintenance(${index})">
+                    Delete
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+function completeMaintenance(index){
+
+    maintenance[index].status="Completed";
+
+    saveData();
+    renderMaintenance();
+    updateDashboard();
+
+    toast("Maintenance completed.");
+
+}
+
+
+function deleteMaintenance(index){
+
+    maintenance.splice(index,1);
+
+    saveData();
+    renderMaintenance();
+    updateDashboard();
+
+}
+
+
+/* =====================================================
+   FAULT CENTER
+===================================================== */
+
+function openFaultModal(){
+
+    document.getElementById("faultModal")
+        .classList.add("show");
+
+}
+
+
+function saveFault(){
+
+    const equipmentName =
+        document.getElementById("faultEquipment")
+        .value.trim();
+
+    const fault =
+        document.getElementById("faultName")
+        .value.trim();
+
+    const severity =
+        document.getElementById("faultSeverity").value;
+
+    if(!equipmentName || !fault){
+
+        toast("Enter equipment and fault.");
+
+        return;
+    }
+
+    faults.push({
+
+        id:Date.now(),
+
+        equipment:equipmentName,
+
+        fault,
+
+        severity,
+
+        status:"Active",
+
+        date:new Date().toLocaleDateString()
+
+    });
+
+    saveData();
+    renderFaults();
+    updateDashboard();
+
+    closeModal("faultModal");
+
+    toast("Fault reported.");
+
+}
+
+
+function renderFaults(){
+
+    const table =
+        document.getElementById("faultTable");
+
+    if(!table)return;
+
+    table.innerHTML="";
+
+    faults.forEach((f,index)=>{
+
+        let severityClass =
+            f.severity==="Critical" ||
+            f.severity==="High"
+            ? "badge-red"
+            : f.severity==="Medium"
+            ? "badge-yellow"
+            : "badge-green";
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${f.equipment}</td>
+
+            <td>${f.fault}</td>
+
+            <td>
+                <span class="badge ${severityClass}">
+                    ${f.severity}
+                </span>
+            </td>
+
+            <td>${f.status}</td>
+
+            <td>${f.date}</td>
+
+            <td>
+
+                ${
+                    f.status==="Active"
+
+                    ?
+
+                    `<button
+                        class="btn btn-success btn-small"
+                        onclick="resolveFault(${index})">
+                        Resolve
+                    </button>`
+
+                    :
+
+                    ""
+                }
+
+                <button
+                    class="btn btn-danger btn-small"
+                    onclick="deleteFault(${index})">
+                    Delete
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+function resolveFault(index){
+
+    faults[index].status="Resolved";
+
+    saveData();
+    renderFaults();
+    updateDashboard();
+
+    toast("Fault resolved.");
+
+}
+
+
+function deleteFault(index){
+
+    faults.splice(index,1);
+
+    saveData();
+    renderFaults();
+    updateDashboard();
+
+}
+
+
+/* =====================================================
+   CALCULATORS
+===================================================== */
+
+function calculatePower(){
+
+    const V =
+        Number(document.getElementById("powerV").value);
+
+    const I =
+        Number(document.getElementById("powerI").value);
+
+    const PF =
+        Number(document.getElementById("powerPF").value);
+
+    const phase =
+        Number(document.getElementById("powerPhase").value);
+
+    if(!V || !I){
+
+        document.getElementById("powerResult")
+            .textContent="Enter voltage and current.";
+
+        return;
+    }
+
+    let P;
+
+    if(phase===3){
+
+        P =
+            Math.sqrt(3)*V*I*PF;
+
+    }else{
+
+        P =
+            V*I*PF;
+
+    }
+
+    document.getElementById("powerResult")
+        .textContent =
+        `Power = ${(P/1000).toFixed(3)} kW`;
+
+}
+
+
+function calculateTransformer(){
+
+    const kVA =
+        Number(document.getElementById("trKVA").value);
+
+    const V =
+        Number(document.getElementById("trV").value);
+
+    if(!kVA || !V){
+
+        document.getElementById("trResult")
+            .textContent="Enter kVA and voltage.";
+
+        return;
+    }
+
+    const I =
+        (kVA*1000)/V;
+
+    document.getElementById("trResult")
+        .textContent =
+        `Rated Current = ${I.toFixed(2)} A`;
+
+}
+
+
+function calculateMotor(){
+
+    const V =
+        Number(document.getElementById("motorV").value);
+
+    const I =
+        Number(document.getElementById("motorI").value);
+
+    const PF =
+        Number(document.getElementById("motorPF").value);
+
+    const efficiency =
+        Number(document.getElementById("motorEff").value)/100;
+
+    const input =
+        Math.sqrt(3)*V*I*PF;
+
+    const output =
+        input*efficiency;
+
+    document.getElementById("motorResult")
+        .textContent =
+        `Input = ${(input/1000).toFixed(2)} kW | Output = ${(output/1000).toFixed(2)} kW`;
+
+}
+
+
+function calculateEnergyCost(){
+
+    const kw =
+        Number(document.getElementById("energyKW").value);
+
+    const hours =
+        Number(document.getElementById("energyHours").value);
+
+    const days =
+        Number(document.getElementById("energyDays").value);
+
+    const tariff =
+        Number(document.getElementById("energyTariff").value);
+
+    const units =
+        kw*hours*days;
+
+    const cost =
+        units*tariff;
+
+    document.getElementById("energyCostResult")
+        .textContent =
+        `Energy = ${units.toFixed(2)} kWh | Cost = ₹${cost.toFixed(2)}`;
+
+}
+
+
+function calculatePFCorrection(){
+
+    const P =
+        Number(document.getElementById("pfKW").value);
+
+    const oldPF =
+        Number(document.getElementById("pfOld").value);
+
+    const newPF =
+        Number(document.getElementById("pfNew").value);
+
+    if(
+        !P ||
+        oldPF<=0 ||
+        oldPF>1 ||
+        newPF<=0 ||
+        newPF>1
+    ){
+
+        document.getElementById("pfResult")
+            .textContent="Enter valid values.";
+
+        return;
+    }
+
+    const Q =
+        P*(
+            Math.tan(Math.acos(oldPF)) -
+            Math.tan(Math.acos(newPF))
+        );
+
+    document.getElementById("pfResult")
+        .textContent =
+        `Required capacitor = ${Q.toFixed(2)} kVAR`;
+
+}
+
+
+function calculateDrop(){
+
+    const I =
+        Number(document.getElementById("dropI").value);
+
+    const R =
+        Number(document.getElementById("dropR").value);
+
+    const L =
+        Number(document.getElementById("dropL").value);
+
+    const V =
+        Number(document.getElementById("dropV").value);
+
+    const drop =
+        Math.sqrt(3)*I*R*L;
+
+    const percentage =
+        (drop/V)*100;
+
+    document.getElementById("dropResult")
+        .textContent =
+        `Voltage Drop = ${drop.toFixed(2)} V (${percentage.toFixed(2)}%)`;
+
+}
+
+
+/* =====================================================
+   SOLAR
+===================================================== */
+
+function calculateSolar(){
+
+    const capacity =
+        Number(document.getElementById("solarKW").value);
+
+    const sun =
+        Number(document.getElementById("sunHours").value);
+
+    const efficiency =
+        Number(document.getElementById("solarEff").value)/100;
+
+    const tariff =
+        Number(document.getElementById("solarTariff").value);
+
+    const daily =
+        capacity*sun*efficiency;
+
+    const monthly =
+        daily*30;
+
+    const value =
+        monthly*tariff;
+
+    document.getElementById("solarResult").innerHTML = `
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="kpi-title">Daily Generation</div>
+                <div class="kpi-value">
+                    ${daily.toFixed(2)} kWh
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="kpi-title">Monthly Generation</div>
+                <div class="kpi-value">
+                    ${monthly.toFixed(2)} kWh
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="kpi-title">Estimated Value</div>
+                <div class="kpi-value">
+                    ₹${value.toFixed(0)}
+                </div>
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   ENERGY
+===================================================== */
+
+function addEnergyReading(){
+
+    const energy =
+        Number(document.getElementById("readingEnergy").value);
+
+    const tariff =
+        Number(document.getElementById("readingTariff").value);
+
+    if(!energy){
+
+        toast("Enter energy reading.");
+
+        return;
+    }
+
+    energyReadings.push({
+
+        date:new Date().toLocaleDateString(),
+
+        energy,
+
+        tariff,
+
+        cost:energy*tariff
+
+    });
+
+    saveData();
+    renderEnergy();
+
+    document.getElementById("readingEnergy").value="";
+
+    toast("Energy reading added.");
+
+}
+
+
+function renderEnergy(){
+
+    const table =
+        document.getElementById("energyTable");
+
+    if(!table)return;
+
+    table.innerHTML="";
+
+    energyReadings.forEach(e=>{
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${e.date}</td>
+
+            <td>${e.energy.toFixed(2)} kWh</td>
+
+            <td>₹${e.tariff}</td>
+
+            <td>₹${e.cost.toFixed(2)}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+
+    const total =
+        energyReadings.reduce(
+            (sum,e)=>sum+Number(e.energy),0
+        );
+
+    const cost =
+        energyReadings.reduce(
+            (sum,e)=>sum+Number(e.cost),0
+        );
+
+    document.getElementById("todayEnergy")
+        .textContent =
+        (energyReadings.at(-1)?.energy || 0)+" kWh";
+
+    document.getElementById("monthEnergy")
+        .textContent =
+        total.toFixed(2)+" kWh";
+
+    document.getElementById("monthCost")
+        .textContent =
+        "₹"+cost.toFixed(2);
+
+}
+
+
+/* =====================================================
+   REPORT
+===================================================== */
+
+function generateReport(){
+
+    const health =
+        equipment.length
+        ? Math.round(
+            equipment.reduce(
+                (s,e)=>s+Number(e.health),0
+            )/equipment.length
+        )
+        : 0;
+
+    document.getElementById("reportPreview").innerHTML = `
+
+        <div class="section-card">
+
+            <h2>VoltGuard 360</h2>
+
+            <p>Electrical Operations Report</p>
+
+            <hr style="margin:15px 0">
+
+            <p>
+                <b>Generated:</b>
+                ${new Date().toLocaleString()}
+            </p>
+
+            <br>
+
+            <p>
+                <b>Total Equipment:</b>
+                ${equipment.length}
+            </p>
+
+            <p>
+                <b>Active Faults:</b>
+                ${faults.filter(f=>f.status==="Active").length}
+            </p>
+
+            <p>
+                <b>Pending Maintenance:</b>
+                ${maintenance.filter(m=>m.status==="Pending").length}
+            </p>
+
+            <p>
+                <b>Fleet Health:</b>
+                ${health}%
+            </p>
+
+            <br>
+
+            <button class="btn" onclick="window.print()">
+                🖨️ Print Report
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   EXPORT
+===================================================== */
+
+function downloadCSV(filename,rows){
+
+    const csv =
+        rows.map(row =>
+            row.map(value =>
+                `"${String(value).replace(/"/g,'""')}"`
+            ).join(",")
+        ).join("\n");
+
+    const blob =
+        new Blob([csv],{type:"text/csv"});
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href=url;
+    a.download=filename;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+function exportEquipment(){
+
+    const rows = [
+
+        [
+            "ID",
+            "Name",
+            "Type",
+            "Capacity",
+            "Location",
+            "Health"
+        ]
+
+    ];
+
+    equipment.forEach(e=>{
+
+        rows.push([
+            e.id,
+            e.name,
+            e.type,
+            e.capacity,
+            e.location,
+            e.health+"%"
+        ]);
+
+    });
+
+    downloadCSV(
+        "VoltGuard360_Equipment.csv",
+        rows
+    );
+
+}
+
+
+function exportFaults(){
+
+    const rows = [
+
+        [
+            "Equipment",
+            "Fault",
+            "Severity",
+            "Status",
+            "Date"
+        ]
+
+    ];
+
+    faults.forEach(f=>{
+
+        rows.push([
+            f.equipment,
+            f.fault,
+            f.severity,
+            f.status,
+            f.date
+        ]);
+
+    });
+
+    downloadCSV(
+        "VoltGuard360_Faults.csv",
+        rows
+    );
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function closeModal(id){
+
+    document.getElementById(id)
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDark(){
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "vg_dark",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function toast(message){
+
+    const box =
+        document.getElementById("toast");
+
+    box.textContent=message;
+
+    box.style.display="block";
+
+    setTimeout(()=>{
+        box.style.display="none";
+    },2500);
+
+}
+
+
+/* =====================================================
+   START WEBSITE
+===================================================== */
+
+if(localStorage.getItem("vg_dark")==="true"){
+
+    document.body.classList.add("dark");
+
+}
+
+renderEquipment();
+renderMaintenance();
+renderFaults();
+renderEnergy();
+updateDashboard();
+
+</script>
+
+</body>
+</html>
